@@ -1,0 +1,25 @@
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Ignore Terraform plan files
+*.tfplan
+
+# Ignore Terraform plugin directory and lock file
+.terraform/
+.terraform.lock.hcl
+
+# Ignore crash log files
+crash.log
+crash.*.log
+
+# Ignore sensitive keypair directory
+keypair/
+
+# Ignore other sensitive files if any (e.g., .tfvars files with secrets)
+# *.tfvars
+# *.tfvars.json
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
