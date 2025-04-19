@@ -37,18 +37,18 @@ Enter your AWS access key, secret key, default region (`ap-southeast-1`), and ou
 1. Create a keypair directory in the Terraform folder:
    ```bash
    mkdir -p keypair
-2.   cd keypair
    ```
-3. Generate SSH key pair:
+2. Generate SSH key pair:
    ```bash
+   cd keypair
    ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
    ```
    - Save the keys as `nt548-key` (private key) and `nt548-key.pub` (public key) when prompted for the file name.
-4. Set appropriate permissions on the private key:
+3. Set appropriate permissions on the private key:
    ```bash
    chmod 400 nt548-key
    ```
-5. Return to the main Terraform directory:
+4. Return to the main Terraform directory:
    ```bash
    cd ..
    ```
@@ -113,6 +113,6 @@ terraform destroy --var-file="terraform.tfvars"
 ## Notes
 
 - This infrastructure creates resources that may incur AWS charges.
-- The security group for the public instance only allows SSH access from a specific IP (`a.b.c.d/32`). You can change it by go to file main.tf of modules security
+- The security group for the public instance only allows SSH access from a specific IP (`27.64.78.135/32`).
 - Private instances can only be accessed through the public instance.
 - All created instances run Amazon Linux 2 AMI.
