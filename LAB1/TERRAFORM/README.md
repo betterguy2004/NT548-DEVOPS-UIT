@@ -37,18 +37,18 @@ Enter your AWS access key, secret key, default region (`ap-southeast-1`), and ou
 1. Create a keypair directory in the Terraform folder:
    ```bash
    mkdir -p keypair
-d   cd keypair
+2.   cd keypair
    ```
-2. Generate SSH key pair:
+3. Generate SSH key pair:
    ```bash
    ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
    ```
    - Save the keys as `nt548-key` (private key) and `nt548-key.pub` (public key) when prompted for the file name.
-3. Set appropriate permissions on the private key:
+4. Set appropriate permissions on the private key:
    ```bash
    chmod 400 nt548-key
    ```
-4. Return to the main Terraform directory:
+5. Return to the main Terraform directory:
    ```bash
    cd ..
    ```
