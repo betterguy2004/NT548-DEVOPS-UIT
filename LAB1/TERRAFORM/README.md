@@ -113,6 +113,6 @@ terraform destroy --var-file="terraform.tfvars"
 ## Notes
 
 - This infrastructure creates resources that may incur AWS charges.
-- The security group for the public instance only allows SSH access from a specific IP (`27.64.78.135/32`).
+- The security group for the public instance only allows SSH access from a specific IP (`a.b.c.d/32`). To change it go to main.tf in module security
 - Private instances can only be accessed through the public instance.
 - All created instances run Amazon Linux 2 AMI.
