@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Main stack for NT548 lab
+
+Parameters:
+  VpcCidr:
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.0.1.0/24
+  PrivateSubnetCidr:
+    Type: String
+    Default: 10.0.2.0/24
+  MyIp:
+    Type: String
+    Description: Your public IP for SSH access 
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Name of an existing EC2 KeyPair
+
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/nt548-templates/templates/vpc.yaml
+      Parameters:
+        VpcCidr: !Ref VpcCidr
+        PublicSubnetCidr: !Ref PublicSubnetCidr
+        PrivateSubnetCidr: !Ref PrivateSubnetCidr
+
+  SecurityGroupStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/nt548-templates/templates/security_groups.yaml
+      Parameters:
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        MyIp: !Ref MyIp
+
+  EC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/nt548-templates/templates/ec2.yaml #Refix s3
+      Parameters:
+        PublicSubnetId: !GetAtt VPCStack.Outputs.PublicSubnetId
+        PrivateSubnetId: !GetAtt VPCStack.Outputs.PrivateSubnetId
+        PublicSecurityGroupId: !GetAtt SecurityGroupStack.Outputs.PublicSecurityGroupId
+        PrivateSecurityGroupId: !GetAtt SecurityGroupStack.Outputs.PrivateSecurityGroupId
+        KeyName: !Ref KeyName
+
+Outputs:
+  VpcId:
+    Description: ID of the VPC
+    Value: !GetAtt VPCStack.Outputs.VpcId
+  PublicEC2PublicIp:
+    Description: Public IP of the Public EC2 instance
+    Value: !GetAtt EC2Stack.Outputs.PublicEC2PublicIp
+  PrivateEC2PrivateIp:
+    Description: Private IP of the Private EC2 instance
+    Value: !GetAtt EC2Stack.Outputs.PrivateEC2PrivateIp
