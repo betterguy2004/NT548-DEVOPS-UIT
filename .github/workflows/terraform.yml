@@ -20,6 +20,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Change Directory to LAB2/TERRAFORM
+        run: cd LAB2/TERRAFORM
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
@@ -32,12 +35,12 @@ jobs:
       - name: Checkov Scan
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: .
+          directory: LAB2/TERRAFORM
           framework: terraform
         continue-on-error: true  # Không làm fail pipeline, chỉ cảnh báo
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var-file="terraform.tfvars"
 
       - name: Terraform Apply (auto-approve)
         if: github.ref == 'refs/heads/main'
