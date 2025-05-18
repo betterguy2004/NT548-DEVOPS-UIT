@@ -42,3 +42,8 @@ variable "keypair_path" {
   type = string
   default = "./keypair/nt548-key.pub"
 }
+variable "key_name" {
+  description = "Tên của EC2 key pair để SSH vào worker nodes"
+  type        = string
+  default     = ""  # Để trống nếu không cần SSH access
+}

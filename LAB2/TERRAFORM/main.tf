@@ -18,6 +18,11 @@ provider "aws" {
   region = var.region
 }
 
+module "keypair" {
+  source    = "../../modules/keypair"
+  count     = var.key_name != "" ? 1 : 0
+  key_name  = var.key_name
+}
 #Create a complete VPC using module networking
 module "networking" {
   source = "./modules/networking"
@@ -35,17 +40,13 @@ module "security" {
   vpc_id = module.networking.vpc_id
 }
 
-resource "aws_key_pair" "nt548-keypair" {
-  key_name   = "nt548-keypair"
-  public_key = file(var.keypair_path)
-}
 
 
 module "compute" {
   source                         = "./modules/compute"
   region                         = var.region
   image_id                       = var.amis[var.region]
-  key_name                       = aws_key_pair.nt548-keypair.key_name
+  key_name                       = var.key_name
   instance_type                  = var.instance_type
   public_ec2_security_group_ids  = [module.security.public_security_group_id]  # Changed
   private_ec2_security_group_ids = [module.security.private_security_group_id] # Added
