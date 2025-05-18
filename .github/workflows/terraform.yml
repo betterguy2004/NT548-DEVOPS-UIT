@@ -14,6 +14,10 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-southeast-1"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,16 +30,14 @@ jobs:
       - name: Terraform Init
         working-directory: LAB2/TERRAFORM
         run: terraform init
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-southeast-1"
+        
 
       - name: Terraform Format Check
+        working-directory: LAB2/TERRAFORM
         run: terraform fmt -check
 
       - name: Checkov Scan
-        uses: bridgecrewio/checkov-action@v12
+        uses: bridgecrewio/checkov-action@latest
         with:
           directory: LAB2/TERRAFORM
           framework: terraform
@@ -44,16 +46,10 @@ jobs:
       - name: Terraform Plan
         working-directory: LAB2/TERRAFORM
         run: terraform plan -var-file="terraform.tfvars"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-southeast-1"
+        
 
       - name: Terraform Apply (auto-approve)
         working-directory: LAB2/TERRAFORM
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -var-file="terraform.tfvars"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-southeast-1"
+        
