@@ -41,7 +41,10 @@ Enter your AWS access key, secret key, default region (`ap-southeast-1`), and ou
 2. Generate SSH key pair:
    ```bash
    cd keypair
+   type nul > nt548-key 
+   type nul > nt548-key.pub
    ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+   save as nt548-key
    ```
    - Save the keys as `nt548-key` (private key) and `nt548-key.pub` (public key) when prompted for the file name.
 3. Set appropriate permissions on the private key:
