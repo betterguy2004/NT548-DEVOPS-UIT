@@ -19,7 +19,7 @@ provider "aws" {
 }
 
 module "keypair" {
-  source    = "../../modules/keypair"
+  source    = "./modules/keypair"
   count     = var.key_name != "" ? 1 : 0
   key_name  = var.key_name
 }
