@@ -13,20 +13,18 @@ on:
       - LAB2/TERRAFORM/** # Chỉ trigger khi có thay đổi trong thư mục này
 jobs:
   terraform:
-    name: 'Terraform Plan, Apply & Security Scan'
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Change Directory to LAB2/TERRAFORM
-        run: cd LAB2/TERRAFORM
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
 
       - name: Terraform Init
+        working-directory: LAB2/TERRAFORM
         run: terraform init
 
       - name: Terraform Format Check
@@ -40,9 +38,11 @@ jobs:
         continue-on-error: true  # Không làm fail pipeline, chỉ cảnh báo
 
       - name: Terraform Plan
+        working-directory: LAB2/TERRAFORM
         run: terraform plan -var-file="terraform.tfvars"
 
       - name: Terraform Apply (auto-approve)
+        working-directory: LAB2/TERRAFORM
         if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve -var-file="terraform.tfvars"
         env:
