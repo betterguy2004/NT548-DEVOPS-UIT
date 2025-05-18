@@ -26,6 +26,10 @@ jobs:
       - name: Terraform Init
         working-directory: LAB2/TERRAFORM
         run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-southeast-1"
 
       - name: Terraform Format Check
         run: terraform fmt -check
@@ -40,6 +44,10 @@ jobs:
       - name: Terraform Plan
         working-directory: LAB2/TERRAFORM
         run: terraform plan -var-file="terraform.tfvars"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "ap-southeast-1"
 
       - name: Terraform Apply (auto-approve)
         working-directory: LAB2/TERRAFORM
