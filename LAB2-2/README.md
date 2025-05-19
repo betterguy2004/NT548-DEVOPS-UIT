@@ -9,41 +9,6 @@ LAB2-2 là bài thực hành về kiểm thử và xác thực tự động Clou
 
 `buildspec.yaml` là file cấu hình cho AWS CodeBuild, định nghĩa các bước trong quá trình build tự động:
 
-```yaml
-version: 0.2
-
-phases:
-  install:
-    runtime-versions:
-      python: 3.9
-    commands:
-      # Cài đặt các công cụ cần thiết
-      - pip install cfn-lint
-      - pip install taskcat
-  
-  pre_build:
-    commands:
-      # Kiểm tra cú pháp và tuân thủ quy tắc CloudFormation bằng cfn-lint
-      - cfn-lint templates/*.yaml
-  
-  build:
-    commands:
-      # Thực hiện kiểm thử tự động các template với TaskCat
-      - taskcat test run
-  
-  post_build:
-    commands:
-      # Xử lý kết quả kiểm thử và báo cáo
-      - cat taskcat_outputs/index.html
-      
-artifacts:
-  files:
-    - taskcat_outputs/**/*
-    - templates/**/*
-    - taskcat.yaml
-  discard-paths: no
-```
-
 **Giải thích chi tiết:**
 
 1. **Phase install**: 
@@ -56,10 +21,7 @@ artifacts:
 3. **Phase build**:
    - Chạy TaskCat để kiểm thử việc triển khai thực tế các template
 
-4. **Phase post_build**:
-   - Hiển thị kết quả kiểm thử từ TaskCat
-
-5. **Artifacts**:
+4. **Artifacts**:
    - Lưu trữ các tệp đầu ra để phân tích sau này
 
 ### 2. taskcat.yaml
