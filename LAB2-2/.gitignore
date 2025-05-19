@@ -1,0 +1,25 @@
+# Ignore sensitive files in LAB2-2
+*.pem
+tokengit
+
+# AWS credentials
+.aws/
+
+# Build and deployment artifacts
+taskcat_outputs/
+.taskcat/
+
+# CloudFormation artifacts
+*.template-generated
+
+# Log files
+*.log
+
+# IDE files
+.idea/
+.vscode/
+*.sublime-*
+
+# Local environment files
+.env
+.env.*

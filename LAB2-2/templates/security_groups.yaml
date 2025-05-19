@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Security Groups for NT548 lab
+
+Parameters:
+  VpcId:
+    Type: String
+    Description: ID of the VPC
+  MyIp:
+    Type: String
+    Description: Your public IP for SSH access
+
+Resources:
+  PublicEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Public EC2
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyIp
+      Tags:
+        - Key: Name
+          Value: public-ec2-sg
+
+  PrivateEC2SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Private EC2
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref PublicEC2SecurityGroup
+      Tags:
+        - Key: Name
+          Value: private-ec2-sg
+
+Outputs:
+  PublicSecurityGroupId:
+    Description: ID of the Public EC2 Security Group
+    Value: !Ref PublicEC2SecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-PublicSecurityGroupId"
+  PrivateSecurityGroupId:
+    Description: ID of the Private EC2 Security Group
+    Value: !Ref PrivateEC2SecurityGroup
+    Export:
+      Name: !Sub "${AWS::StackName}-PrivateSecurityGroupId"
