@@ -1,0 +1,17 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - pip install cfn-lint taskcat
+  build:
+    commands:
+      - echo "Running cfn-lint to validate CloudFormation templates"
+      - cfn-lint *.yaml
+      - echo "Running taskcat to test CloudFormation templates"
+      - taskcat -c taskcat.yml
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no

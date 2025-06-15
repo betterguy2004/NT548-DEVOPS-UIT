@@ -1,0 +1,10 @@
+project:
+  name: nt548-cloudformation
+  regions:
+    - ap-southeast-1
+tests:
+  default:
+    template: templates/main.yaml
+    parameters:
+      MyIp: "14.169.36.254/32"  # Thay bằng IP của bạn
+      KeyName: "Lab1cloudformation"  # Thay bằng Key Pair của bạn
