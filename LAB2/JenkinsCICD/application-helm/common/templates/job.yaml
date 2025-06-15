@@ -1,0 +1,42 @@
+{{- define "common.job" -}}
+{{- if .Values.job.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "common.name" . }}-job
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+  {{- with .Values.job.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  template:
+    metadata:
+      {{- with .Values.job.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      {{- with .Values.job.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.serviceAccount.create }}
+      serviceAccountName: {{ include "common.serviceAccountName" . }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.jobImageTag }}"
+        imagePullPolicy: {{ .Values.job.image.pullPolicy }}
+        {{- with .Values.job.args }}
+        args: 
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.job.env }}
+        env:
+          {{- toYaml . | nindent 10}}
+        {{- end}}
+      restartPolicy: {{ .Values.job.restartPolicy }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,59 @@
+image:
+  repository: hungtran679/mt_meeting-service
+  tag: latest
+  pullPolicy: Always
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+
+pvc:
+  enabled: false
+
+app:
+  replicaCount: 1
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-pre-populate-only: "true"
+    vault.hashicorp.com/role: "meeting-service"
+    vault.hashicorp.com/agent-inject-secret-meeting-service: "kv/data/meeting-service"
+    vault.hashicorp.com/agent-inject-template-meeting-service: |
+      {{- with secret "kv/data/meeting-service" -}}
+      {{ .Data.data.content }}
+      {{- end }}
+    vault.hashicorp.com/agent-inject-file-meeting-service: "application.properties"
+  
+  env: 
+    - name: CONFIG_PATH
+      value: /vault/secrets/application.properties
+
+  resources: {}
+
+  livenessProbe:
+    tcpSocket:
+      port: 8083
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    tcpSocket:
+      port: 8083
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+rollout:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8083
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

@@ -1,0 +1,77 @@
+image:
+  repository: hungtran679/mt_frontend-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+
+app:
+  replicaCount: 1
+  
+  resources: {}
+
+  volumes: 
+    - name: env-volume
+      configMap:
+        name: env-configmap
+        optional: false
+        items:
+          - key: env.js
+            path: "env.js"
+  volumeMounts:
+    - name: env-volume
+      mountPath: /run/html/env.js
+      subPath: env.js
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /
+      port: 80
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+serviceAccount:
+  create: false
+
+configmap:
+  enabled: true
+  name: env-configmap
+  data: 
+    env.js: |
+      window.env = {
+        "USER_SERVICE_ENDPOINT": "/user-service",
+        "TEAM_SERVICE_ENDPOINT": "/team-service",
+        "CHAT_SERVICE_ENDPOINT": "/chat-service",
+        "MEETING_SERVICE_ENDPOINT": "/meeting-service",
+        "WEBSOCKET_SERVICE_ENDPOINT": "/websocket-service",
+        "AWS_REGION": "us-east-1",
+        "COGNITO_USER_POOL_ID": "us-east-1_y30eiJyjf",
+        "COGNITO_CLIENT_ID": "4u22a3844h3m93q0q6b87m4idl"
+      };
+
+rollout:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false
+  # minReplicas: 1
+  # maxReplicas: 5
+  # targetCPUUtilizationPercentage: 80

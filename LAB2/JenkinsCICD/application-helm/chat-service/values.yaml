@@ -1,0 +1,59 @@
+image:
+  repository: hungtran679/mt_chat-service
+  tag: latest
+  pullPolicy: Always
+
+serviceAccount:
+  create: true
+
+pvc:
+  enabled: false
+
+app:
+  replicaCount: 1
+
+  podLabels: {}
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-pre-populate-only: "true"
+    vault.hashicorp.com/role: "chat-service"
+    vault.hashicorp.com/agent-inject-secret-chat-service: "kv/data/chat-service"
+    vault.hashicorp.com/agent-inject-template-chat-service: |
+      {{- with secret "kv/data/chat-service" -}}
+      {{ .Data.data.content }}
+      {{- end }}
+    vault.hashicorp.com/agent-inject-file-chat-service: "application.properties"
+  
+  env: 
+    - name: CONFIG_PATH
+      value: /vault/secrets/application.properties
+  
+  resources: {}
+
+  livenessProbe:
+    tcpSocket:
+      port: 8082
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    tcpSocket:
+      port: 8082
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+rollout:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8082
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

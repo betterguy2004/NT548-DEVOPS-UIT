@@ -1,0 +1,28 @@
+image:
+  imageTag: latest
+
+job:
+  enabled: false
+  image:
+    jobImageTag: latest
+
+app:
+  replicaCount: 1
+
+rollout:
+  enabled: true
+  previewServiceEnabled: true
+  bluegreen:
+    autoPromotionEnabled: false
+    scaleDownDelaySeconds: 30
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - paths:
+        - path: "/team-service/(?!.*/private/).*"
+          pathType: ImplementationSpecific
+  tls: []

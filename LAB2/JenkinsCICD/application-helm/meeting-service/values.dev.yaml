@@ -1,0 +1,16 @@
+image:
+  imageTag: 1.0-a59cbc8-8
+
+app:
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - paths:
+        - path: "/meeting-service/(?!.*/private/).*"
+          pathType: ImplementationSpecific
+  tls: []

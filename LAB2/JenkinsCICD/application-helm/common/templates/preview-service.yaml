@@ -1,0 +1,33 @@
+{{- define "common.previewService" -}}
+{{- if .Values.rollout.previewServiceEnabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.rolloutPreviewservice" . }}
+  labels:
+    {{- include "common.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      {{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+      protocol: TCP
+      name: http
+    {{- if .Values.service.additionalPorts }}
+    {{- range .Values.service.additionalPorts }}
+    - port: {{ .port }}
+      targetPort: {{ .name }}
+      {{ if .nodePort }}
+      nodePort: {{ .nodePort }}
+      {{- end }}
+      protocol: TCP
+      name: {{ .name }}
+    {{- end }}
+    {{- end}}
+  selector:
+    {{- include "common.selectorLabels" . | nindent 4 }}
+{{- end }}
+{{- end}}

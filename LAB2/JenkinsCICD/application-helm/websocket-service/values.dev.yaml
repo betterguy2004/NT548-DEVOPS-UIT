@@ -1,0 +1,16 @@
+image:
+  imageTag: latest
+
+app:
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - paths:
+        - path: "/websocket-service/(?!.*/private/).*"
+          pathType: ImplementationSpecific
+  tls: []

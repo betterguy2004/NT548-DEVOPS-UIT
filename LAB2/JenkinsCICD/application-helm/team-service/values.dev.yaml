@@ -1,0 +1,21 @@
+image:
+  imageTag: latest
+
+app:
+  replicaCount: 1
+
+job:
+  enabled: false
+  image:
+    jobImageTag: latest
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - paths:
+        - path: "/team-service/(?!.*/private/).*"
+          pathType: ImplementationSpecific
+  tls: []

@@ -1,0 +1,14 @@
+image:
+  imageTag: 1.0-c572f59-10
+
+app:
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+  - paths:
+      - path: /
+        pathType: ImplementationSpecific
+  tls: []

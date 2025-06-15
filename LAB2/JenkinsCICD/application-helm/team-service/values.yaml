@@ -1,0 +1,87 @@
+image:
+  repository: hungtran679/mt_team-service
+  tag: latest
+  pullPolicy: Always
+
+serviceAccount:
+  create: true
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "0"
+
+pvc:
+  enabled: false
+
+app:
+  replicaCount: 1
+
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-pre-populate-only: "true"
+    vault.hashicorp.com/role: "team-service"
+    vault.hashicorp.com/agent-inject-secret-team-service: "kv/data/team-service"
+    vault.hashicorp.com/agent-inject-template-team-service: |
+      {{- with secret "kv/data/team-service" -}}
+      {{ .Data.data.content }}
+      {{- end }}
+    vault.hashicorp.com/agent-inject-file-team-service: "application.properties"
+  
+  env:
+  - name: CONFIG_PATH
+    value: "/vault/secrets/application.properties"
+  
+  resources: {}
+  
+  livenessProbe:
+    tcpSocket:
+      port: 8081
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    tcpSocket:
+      port: 8081
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+job:
+  enabled: true
+
+  image:
+    repository: "hungtran679/mt_flyway_team-service"
+    tag: "latest"
+    pullPolicy: Always
+
+  annotations:
+    helm.sh/hook: "pre-install,pre-upgrade"
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: "before-hook-creation,hook-succeeded"
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-pre-populate-only: "true"
+    vault.hashicorp.com/role: "team-service"
+    vault.hashicorp.com/agent-inject-secret-flyway: "kv/data/flyway-team-service"
+    vault.hashicorp.com/agent-inject-template-flyway: |
+      {{- with secret "kv/data/flyway-team-service" -}}
+      {{ .Data.data.content }}
+      {{- end }}
+    vault.hashicorp.com/agent-inject-file-flyway: "flyway.conf"
+  
+  restartPolicy: Never
+  args: ["-configFiles=/vault/secrets/flyway.conf"]
+
+rollout:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8081
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

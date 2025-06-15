@@ -1,0 +1,58 @@
+image:
+  repository: hungtran679/mt_websocket-service
+  tag: "latest"
+  pullPolicy: Always
+
+serviceAccount:
+  create: true
+
+pvc:
+  enabled: false
+
+app:
+  replicaCount: 1
+
+  podAnnotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/agent-pre-populate-only: "true"
+    vault.hashicorp.com/role: "websocket-service"
+    vault.hashicorp.com/agent-inject-secret-user-service: "kv/data/websocket-service"
+    vault.hashicorp.com/agent-inject-template-user-service: |
+      {{- with secret "kv/data/websocket-service" -}}
+      {{ .Data.data.content }}
+      {{- end }}
+    vault.hashicorp.com/agent-inject-file-user-service: "application.properties"
+  
+  env:
+    - name: CONFIG_PATH
+      value: /vault/secrets/application.properties
+  
+  resources: {}
+
+  livenessProbe:
+    tcpSocket:
+      port: 8084
+    initialDelaySeconds: 5
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    tcpSocket:
+      port: 8084
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+
+rollout:
+  enabled: false
+
+service:
+  type: ClusterIP
+  port: 8084
+
+ingress:
+  enabled: false
+
+autoscaling:
+  enabled: false

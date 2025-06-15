@@ -1,0 +1,18 @@
+image:
+  imageTag: 1.0-c572f59-10
+
+rollout:
+  enabled: true
+  previewServiceEnabled: true
+  bluegreen:
+    autoPromotionEnabled: false
+    scaleDownDelaySeconds: 30
+
+ingress:
+  enabled: true
+  className: "nginx"
+  hosts:
+  - paths:
+      - path: /
+        pathType: ImplementationSpecific
+  tls: []
