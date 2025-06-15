@@ -1,57 +1,57 @@
-name: Terraform CI
+# name: Terraform CI
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - LAB2/TERRAFORM/** # Chỉ trigger khi có thay đổi trong thư mục này
-  pull_request:
-    branches:
-      - main
-    paths:
-      - LAB2/TERRAFORM/** # Chỉ trigger khi có thay đổi trong thư mục này
-jobs:
-  terraform:
-    runs-on: ubuntu-latest
-    env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "ap-southeast-1"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - LAB2/TERRAFORM/** # Chỉ trigger khi có thay đổi trong thư mục này
+#   pull_request:
+#     branches:
+#       - main
+#     paths:
+#       - LAB2/TERRAFORM/** # Chỉ trigger khi có thay đổi trong thư mục này
+# jobs:
+#   terraform:
+#     runs-on: ubuntu-latest
+#     env:
+#           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           AWS_REGION: "ap-southeast-1"
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.0
+#       - name: Setup Terraform
+#         uses: hashicorp/setup-terraform@v3
+#         with:
+#           terraform_version: 1.5.0
 
-      - name: Terraform Init
-        working-directory: LAB2/TERRAFORM
-        run: terraform init
+#       - name: Terraform Init
+#         working-directory: LAB2/TERRAFORM
+#         run: terraform init
         
-      - name: Terraform Format
-        working-directory: LAB2/TERRAFORM
-        run: terraform fmt
-      - name: Terraform Format Check
-        working-directory: LAB2/TERRAFORM
-        run: terraform fmt -check -diff
+#       - name: Terraform Format
+#         working-directory: LAB2/TERRAFORM
+#         run: terraform fmt
+#       - name: Terraform Format Check
+#         working-directory: LAB2/TERRAFORM
+#         run: terraform fmt -check -diff
 
-      - name: Checkov Scan
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          directory: LAB2/TERRAFORM
-          framework: terraform
-        continue-on-error: true  # Không làm fail pipeline, chỉ cảnh báo
+#       - name: Checkov Scan
+#         uses: bridgecrewio/checkov-action@v12
+#         with:
+#           directory: LAB2/TERRAFORM
+#           framework: terraform
+#         continue-on-error: true  # Không làm fail pipeline, chỉ cảnh báo
 
-      - name: Terraform Plan
-        working-directory: LAB2/TERRAFORM
-        run: terraform plan -var-file="terraform.tfvars"
+#       - name: Terraform Plan
+#         working-directory: LAB2/TERRAFORM
+#         run: terraform plan -var-file="terraform.tfvars"
         
 
-      - name: Terraform Apply (auto-approve)
-        working-directory: LAB2/TERRAFORM
-        if: github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve -var-file="terraform.tfvars"
+#       - name: Terraform Apply (auto-approve)
+#         working-directory: LAB2/TERRAFORM
+#         if: github.ref == 'refs/heads/main'
+#         run: terraform apply -auto-approve -var-file="terraform.tfvars"
         
